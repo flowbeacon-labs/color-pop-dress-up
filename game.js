@@ -460,6 +460,22 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Escape'&&!$('runwayDialog').hidden){stopRunway(false);$('runwayDialog').hidden=true;}
 });
 
+
+function faceCloseupSVG(){
+ // Reuse the exact same avatar with a cropped SVG viewBox; outfits and model state stay untouched.
+ return modelSVG({mini:true}).replace('viewBox="0 0 350 480"','viewBox="114 32 122 147"').replace('preserveAspectRatio="xMidYMid meet"','preserveAspectRatio="xMidYMid meet"');
+}
+function openFaceCloseup(){
+ $('faceCloseupArt').innerHTML=faceCloseupSVG();
+ $('faceCloseupName').textContent=models[state.model].name;
+ $('faceCloseupDialog').hidden=false;
+ $('faceCloseupClose').focus();
+}
+$('faceCloseupOpen').addEventListener('click',openFaceCloseup);
+$('faceCloseupClose').addEventListener('click',()=>{$('faceCloseupDialog').hidden=true;});
+$('faceCloseupDialog').addEventListener('click',e=>{if(e.target===$('faceCloseupDialog'))$('faceCloseupDialog').hidden=true;});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('faceCloseupDialog').hidden=true;});
+
 showChallenge();
 renderTabs();paint();historyUI();
 })();
