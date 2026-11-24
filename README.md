@@ -1,5 +1,25 @@
 # Color Pop Fashion Studio
 
+## Fashion Runway (new)
+
+The **Fashion Show** button opens a multi-model runway. This is a browser game feature, not a separate service.
+
+1. Dress Ava, Mia, Zara or Luna using the existing wardrobe.
+2. Choose **Fashion Show → Add Current Model** to put her in the lineup. Each of the four models has a separate outfit slot.
+3. Tap **Dress** or **Edit** on another runway slot, change that model's outfit, then use **Add Current Model** again.
+4. Choose one of four runway scenes: **Pink Dream, Royal Night, Sunny Beach, Starry Galaxy**.
+5. Press **Start Fashion Show**. Models take turns walking and posing, with lightweight CSS animation. Use **Stop Show** whenever needed.
+6. Choose **Save Show Picture** to export an SVG lineup image. **Remove** clears a model from the lineup without deleting an individually saved look.
+
+Lineups and the selected stage theme are saved in local browser storage under `color-pop-runway`, independent of **My Looks**. No sign-in, server, paid assets or network access is needed for the game.
+
+**Limitations:** The runway uses animated 2D SVG models rather than 3D characters; it is a one-show-at-a-time lineup with up to four models. iPhone Safari may open exported SVGs rather than download them directly. Reduced-motion preferences disable the walking animation.
+
+**Validation:** JavaScript syntax and initial 11 simulated-DOM interaction checks passed, including adding a model, lineup persistence, start/stop, theme selection, export action, closing the modal, and original gallery compatibility. This does not substitute for an actual rendered iPhone browser test.
+
+---
+
+
 An original, colorful, offline-capable dress-up game designed for desktop browsers, iPhone, and tablets.
 
 **Play:** https://flowbeacon-labs.github.io/color-pop-dress-up/
