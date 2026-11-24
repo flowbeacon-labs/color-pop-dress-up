@@ -151,6 +151,128 @@ function showChallenge(){const ch=challenges[challengeIndex];$('challengeTitle')
 $('challengeNew').addEventListener('click',()=>{challengeIndex=(challengeIndex+1)%challenges.length;showChallenge();toast('New styling mission!');});
 $('challengeCheck').addEventListener('click',()=>{const ch=challenges[challengeIndex];const checks=[state.mode===ch.mode,ch.items.includes(ch.mode==='dress'?state.dress:state.top)];if(ch.bottom)checks.push(ch.bottom.includes(state.bottom));if(ch.shoes)checks.push(ch.shoes.includes(state.shoes));if(ch.extra)checks.push(state.accessory===ch.extra);const met=checks.filter(Boolean).length;const stars=Math.round(met/checks.length*3);challengeStars+=stars;$('challengeProgress').textContent='Stars earned: '+challengeStars;toast(stars===3?'★★★ Perfect look! Try the next challenge!':'★'.repeat(stars)+'☆'.repeat(3-stars)+' '+met+'/'+checks.length+' goals met. Keep styling!');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('galleryDialog').hidden=true;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();if(e.shiftKey)redo();else undo();}});
+
+/* Runway Show: independent looks for four models, selectable sets and a timed walk. */
+const RUNWAY_KEY='color-pop-runway',RUNWAY_LIMIT=models.length;
+const runwayThemes=[
+ {id:'pink',name:'Pink Dream',subtitle:'Sweet pastel sparkle',start:'#ffe6f4',end:'#efa0c8',light:'#fff5a5'},
+ {id:'royal',name:'Royal Night',subtitle:'A glamorous evening',start:'#382367',end:'#9673d8',light:'#ffe6a7'},
+ {id:'beach',name:'Sunny Beach',subtitle:'Summer fashion',start:'#b7f1ff',end:'#fbe2a0',light:'#fffdfa'},
+ {id:'stars',name:'Starry Galaxy',subtitle:'Space-age style',start:'#181b55',end:'#745ac8',light:'#b9efff'}
+];
+let runwayLineup=Array(RUNWAY_LIMIT).fill(null),runwayTheme='pink',runwayPlaying=false,runwayTimer=null,runwayStep=0;
+function validRunwayLook(value,index){
+ if(!value||typeof value!=='object'||!models[index])return null;
+ // Keep only the outfit fields; model is always the selected runway slot.
+ const look={...snapshot(),...value,model:index};
+ if(!catalog.dress.some(x=>x[0]===look.dress)||!catalog.top.some(x=>x[0]===look.top)||!catalog.bottom.some(x=>x[0]===look.bottom))return null;
+ if(!catalog.shoes.some(x=>x[0]===look.shoes)||!catalog.hair.some(x=>x[0]===look.hair)||!catalog.accessory.some(x=>x[0]===look.accessory))return null;
+ look.scene=Number.isInteger(look.scene)&&look.scene>=0&&look.scene<backgrounds.length?look.scene:0;
+ look.palette=Object.fromEntries(['dress','top','bottom','shoes','accessory'].map(k=>[k,colors.includes(look.palette?.[k])?look.palette[k]:colors[0]]));
+ if(look.hairTint&&!/^#[0-9a-f]{6}$/i.test(look.hairTint))delete look.hairTint;
+ return look;
+}
+function loadRunway(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(RUNWAY_KEY)||'null');
+  if(saved&&Array.isArray(saved.lineup))runwayLineup=runwayLineup.map((_,i)=>validRunwayLook(saved.lineup[i],i));
+  if(runwayThemes.some(t=>t.id===saved?.theme))runwayTheme=saved.theme;
+ }catch{}
+}
+function persistRunway(){
+ try{localStorage.setItem(RUNWAY_KEY,JSON.stringify({version:1,theme:runwayTheme,lineup:runwayLineup}));}catch{toast('Runway not saved: browser storage is unavailable.');}
+}
+function runwayCount(){return runwayLineup.filter(Boolean).length;}
+function runwayArtwork(look){return savedThumbnail(look);}
+function renderRunway(){
+ const theme=runwayThemes.find(t=>t.id===runwayTheme)||runwayThemes[0];
+ $('runwaySet').style.setProperty('--runway-start',theme.start);
+ $('runwaySet').style.setProperty('--runway-end',theme.end);
+ $('runwaySet').style.setProperty('--runway-light',theme.light);
+ $('runwayTheme').value=runwayTheme;
+ $('runwayCount').textContent=runwayCount()+' of '+RUNWAY_LIMIT+' models ready';
+ $('runwaySlots').innerHTML=models.map((m,i)=>{
+  const look=runwayLineup[i],filled=!!look;
+  return `<article class="runway-slot ${filled?'ready':''}"><div class="runway-mini">${filled?runwayArtwork(look):'<div class="runway-placeholder">✦</div>'}</div><strong>${esc(m.name)}</strong><span>${filled?'Ready for the runway':'Outfit needed'}</span><div class="runway-slot-actions"><button type="button" data-runway-edit="${i}">${filled?'Edit':'Dress'}</button>${filled?`<button type="button" data-runway-remove="${i}">Remove</button>`:''}</div></article>`;
+ }).join('');
+ $('runwayStart').disabled=runwayCount()===0||runwayPlaying;
+ $('runwayAdd').disabled=runwayPlaying;
+ $('runwaySavePhoto').disabled=runwayCount()===0;
+ $('runwayStatus').textContent=runwayPlaying?'Fashion show in progress!':runwayCount()?'Ready! Choose your stage and start the show.':'Dress a model, then add her to your fashion show.';
+ $('runwaySlots').querySelectorAll('[data-runway-edit]').forEach(btn=>btn.addEventListener('click',()=>{
+  stopRunway(false);const index=Number(btn.dataset.runwayEdit);checkpoint();
+  const saved=runwayLineup[index];
+  if(saved){restoreState({...saved,model:index});}else{state.model=index;paint();}
+  $('runwayDialog').hidden=true;
+  toast('Styling '+models[index].name+'. Tap Add to Runway when ready!');
+ }));
+ $('runwaySlots').querySelectorAll('[data-runway-remove]').forEach(btn=>btn.addEventListener('click',()=>{
+  stopRunway(false);runwayLineup[Number(btn.dataset.runwayRemove)]=null;persistRunway();renderRunway();
+ }));
+}
+function renderRunwayStage(activeIndex=-1){
+ const theme=runwayThemes.find(t=>t.id===runwayTheme)||runwayThemes[0];
+ $('runwayStage').style.setProperty('--runway-start',theme.start);
+ $('runwayStage').style.setProperty('--runway-end',theme.end);
+ $('runwayStage').style.setProperty('--runway-light',theme.light);
+ const filled=runwayLineup.map((look,i)=>look?{look,i}:null).filter(Boolean);
+ $('runwayStage').innerHTML='<div class="runway-spotlight"></div><div class="runway-models">'+filled.map(({look,i})=>
+  `<div class="runway-performer ${i===activeIndex?'walking':''}" aria-label="${esc(models[i].name)} on the runway"><div class="runway-figure">${runwayArtwork(look)}</div><strong>${esc(models[i].name)}</strong></div>`).join('')+'</div><div class="runway-floor"></div>';
+}
+function stopRunway(announce=true){
+ if(runwayTimer!==null){clearInterval(runwayTimer);runwayTimer=null;}
+ runwayPlaying=false;runwayStep=0;
+ $('runwayStage').classList.remove('playing');
+ $('runwayStart').disabled=runwayCount()===0;
+ $('runwayStart').textContent='▶ Start Fashion Show';
+ $('runwayAdd').disabled=false;
+ if(announce)$('runwayStatus').textContent='Show stopped. You can change outfits or the theme.';
+}
+function startRunway(){
+ if(runwayCount()===0)return;
+ stopRunway(false);runwayPlaying=true;runwayStep=0;
+ $('runwayStart').textContent='■ Stop Show';$('runwayStart').disabled=false;
+ $('runwayAdd').disabled=true;$('runwayStage').classList.add('playing');
+ const filled=runwayLineup.map((look,i)=>look?i:null).filter(i=>i!==null);
+ const advance=()=>{
+  if(!runwayPlaying)return;
+  const index=filled[runwayStep%filled.length];
+  renderRunwayStage(index);
+  $('runwayStatus').textContent=models[index].name+' is walking the runway! ('+(runwayStep+1)+' / '+filled.length+')';
+  runwayStep++;
+  if(runwayStep>=filled.length){
+   // Each model walks once; hold the final pose briefly before stopping.
+   clearInterval(runwayTimer);runwayTimer=null;
+   runwayTimer=setTimeout(()=>{stopRunway(false);renderRunwayStage();$('runwayStatus').textContent='★ Fantastic show! Dress more models or try another theme.';},3800);
+  }
+ };
+ advance();
+ if(runwayStep<filled.length)runwayTimer=setInterval(advance,3800);
+}
+function downloadRunway(){
+ const filled=runwayLineup.map((look,i)=>look?{look,i}:null).filter(Boolean);
+ if(!filled.length)return;
+ const theme=runwayThemes.find(t=>t.id===runwayTheme)||runwayThemes[0],cardWidth=260;
+ // Each original 350×480 model SVG becomes an independent nested, scaled SVG on the card.
+ const artwork=filled.map(({look,i},n)=>{
+  const svg=runwayArtwork(look).replace(/<svg\b[^>]*>/,'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 480" width="230" height="316">');
+  return `<g transform="translate(${20+n*cardWidth},82)">${svg}<text x="115" y="350" text-anchor="middle" fill="#56345a" font-family="sans-serif" font-size="22" font-weight="bold">${esc(models[i].name)}</text></g>`;
+ }).join('');
+ const width=Math.max(320,filled.length*cardWidth+20),result=`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="475" viewBox="0 0 ${width} 475"><defs><linearGradient id="runwayExportBackground" x2="0" y2="1"><stop stop-color="${theme.start}"/><stop offset="1" stop-color="${theme.end}"/></linearGradient></defs><rect width="${width}" height="475" fill="url(#runwayExportBackground)"/><text x="${width/2}" y="48" text-anchor="middle" fill="#56345a" font-family="sans-serif" font-size="30" font-weight="bold">Color Pop Fashion Show — ${esc(theme.name)}</text>${artwork}</svg>`;
+ const url=URL.createObjectURL(new Blob([result],{type:'image/svg+xml;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='color-pop-runway-'+Date.now()+'.svg';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+ $('runwayStatus').textContent='Your fashion show picture is ready to save!';
+}
+$('runwayOpen').addEventListener('click',()=>{
+ $('runwayDialog').hidden=false;renderRunway();renderRunwayStage();$('runwayClose').focus();
+});
+$('runwayClose').addEventListener('click',()=>{stopRunway(false);$('runwayDialog').hidden=true;});
+$('runwayDialog').addEventListener('click',e=>{if(e.target===$('runwayDialog')){stopRunway(false);$('runwayDialog').hidden=true;}});
+$('runwayTheme').addEventListener('change',()=>{runwayTheme=runwayThemes.some(t=>t.id===$('runwayTheme').value)?$('runwayTheme').value:'pink';stopRunway(false);persistRunway();renderRunway();renderRunwayStage();});
+$('runwayAdd').addEventListener('click',()=>{if(runwayPlaying)return;const index=state.model;runwayLineup[index]=validRunwayLook(snapshot(),index);persistRunway();renderRunway();renderRunwayStage();$('runwayStatus').textContent=models[index].name+' joined the runway!';});
+$('runwayStart').addEventListener('click',()=>{if(runwayPlaying){stopRunway();renderRunwayStage();}else startRunway();});
+$('runwaySavePhoto').addEventListener('click',downloadRunway);
+loadRunway();
+
 showChallenge();
 renderTabs();paint();historyUI();
 })();
