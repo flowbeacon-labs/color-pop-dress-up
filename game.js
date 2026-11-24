@@ -188,10 +188,76 @@ function punjabiSceneSVG(scene){
  return '';
 }
 
+
+/**
+ * Portrait layer shared by the dressing-room model, model picker and runway.
+ * Distinct but subtle proportions preserve each character's individuality.
+ * All facial shading is SVG-only, without external files or network requests.
+ */
+function faceSVG(m,index){
+ const tone=blend(m.skin,.19),shadow=blend(m.skin,-.16),contour=blend(m.skin,-.28);
+ const iris=m.eyes;
+ const settings=[
+  {width:37.0,chin:1.0,eye:0.0,brow:0.0,mouth:0.0},
+  {width:38.0,chin:0.0,eye:1.4,brow:-1.0,mouth:1.2},
+  {width:36.5,chin:1.5,eye:-.3,brow:1.2,mouth:-1.0},
+  {width:39.0,chin:.5,eye:.6,brow:.7,mouth:.6},
+  {width:37.0,chin:1.0,eye:.4,brow:-.5,mouth:0.0},
+  {width:36.0,chin:2.0,eye:-.8,brow:1.0,mouth:-.8},
+  {width:38.0,chin:.8,eye:.8,brow:-.7,mouth:.5},
+  {width:37.0,chin:1.3,eye:-.2,brow:1.0,mouth:.0}
+ ][index]||{width:37,chin:1,eye:0,brow:0,mouth:0};
+ const w=settings.width,chin=151+settings.chin,eyeY=106+settings.eye;
+ const gradient='faceTone-'+index,eyeShade='eyeShade-'+index;
+ const eyes=[158,191].map((x,n)=>{
+  const left=n===0;
+  const edge=x+(left?-10:10);
+  return `<g>
+   <path d="M${x-10} ${eyeY}Q${x} ${eyeY-7.5} ${x+10} ${eyeY}Q${x} ${eyeY+5.3} ${x-10} ${eyeY}Z" fill="#fffbf8" stroke="${contour}" stroke-width="1.0"/>
+   <ellipse cx="${x}" cy="${eyeY-.3}" rx="4.4" ry="5.0" fill="${iris}"/>
+   <ellipse cx="${x}" cy="${eyeY-.3}" rx="2.6" ry="3.6" fill="#201d29"/>
+   <circle cx="${x-1.5}" cy="${eyeY-2.0}" r="1.5" fill="#fff"/>
+   <circle cx="${x+2}" cy="${eyeY+1}" r=".65" fill="#fff9f3"/>
+   <path d="M${x-10} ${eyeY}Q${x} ${eyeY-8} ${x+10} ${eyeY}" fill="none" stroke="${blend(m.hair,-.1)}" stroke-width="2" stroke-linecap="round"/>
+   <path d="M${edge} ${eyeY-1}l${left?-3:3} -3" stroke="${blend(m.hair,-.12)}" stroke-width="1.2" stroke-linecap="round"/>
+  </g>`;
+ }).join('');
+ const brows=[158,191].map((x,n)=>`<path d="M${x-12} ${93+settings.brow}Q${x-2} ${87+settings.brow+(n?1:0)} ${x+11} ${92+settings.brow}" fill="none" stroke="${blend(m.hair,.09)}" stroke-width="3.1" stroke-linecap="round" opacity=".93"/>`).join('');
+ return `<g data-face-detail="realistic" aria-hidden="true">
+ <defs>
+  <radialGradient id="${gradient}" cx="39%" cy="33%" r="79%">
+   <stop offset="0%" stop-color="${tone}"/>
+   <stop offset="55%" stop-color="${m.skin}"/>
+   <stop offset="100%" stop-color="${shadow}"/>
+  </radialGradient>
+  <linearGradient id="${eyeShade}" x1="0" y1="0" x2="1" y2="0">
+   <stop stop-color="${shadow}" stop-opacity=".22"/>
+   <stop offset=".5" stop-color="${tone}" stop-opacity="0"/>
+   <stop offset="1" stop-color="${shadow}" stop-opacity=".22"/>
+  </linearGradient>
+ </defs>
+ <ellipse cx="137" cy="112" rx="7.4" ry="13.3" fill="${m.skin}" stroke="${shadow}" stroke-width=".8"/>
+ <ellipse cx="213" cy="112" rx="7.4" ry="13.3" fill="${m.skin}" stroke="${shadow}" stroke-width=".8"/>
+ <path d="M175 48C${175-w} 48 ${175-w-6} 79 ${175-w} 113Q${175-w+2} 137 160 146Q175 ${chin+5} 190 146Q${175+w-2} 137 ${175+w} 113C${175+w+6} 79 ${175+w} 48 175 48Z" fill="url(#${gradient})" stroke="${shadow}" stroke-width=".9"/>
+ <path d="M148 119Q143 111 149 103M201 103Q207 112 202 119" fill="none" stroke="${contour}" stroke-width="1.2" opacity=".18"/>
+ <path d="M157 132Q175 142 193 132" fill="none" stroke="${shadow}" stroke-width="1" opacity=".17"/>
+ <ellipse cx="151" cy="120" rx="10" ry="5.8" fill="#d27c87" opacity=".20"/>
+ <ellipse cx="199" cy="120" rx="10" ry="5.8" fill="#d27c87" opacity=".20"/>
+ <path d="M150 102Q158 98 167 101M183 101Q192 98 200 102" stroke="${shadow}" stroke-width="2.3" opacity=".12" fill="none"/>
+ ${brows}
+ ${eyes}
+ <path d="M175 109Q173 119 171 126Q174 130 179 127" fill="none" stroke="${contour}" stroke-width="1.5" opacity=".42" stroke-linecap="round"/>
+ <path d="M178 124Q180 125 181 126" fill="none" stroke="${tone}" stroke-width="1.6" opacity=".7"/>
+ <path d="M163 ${136+settings.mouth}Q170 ${132+settings.mouth} 175 ${134+settings.mouth}Q180 ${132+settings.mouth} 187 ${136+settings.mouth}Q177 ${142+settings.mouth} 163 ${136+settings.mouth}Z" fill="#b85e72" opacity=".83"/>
+ <path d="M165 ${136+settings.mouth}Q175 ${138+settings.mouth} 185 ${136+settings.mouth}" stroke="#813f53" stroke-width=".85" fill="none" opacity=".55"/>
+ <path d="M170 ${142+settings.mouth}Q176 ${143+settings.mouth} 181 ${142+settings.mouth}" stroke="${tone}" stroke-width="1.5" fill="none" opacity=".58"/>
+ <path d="M155 150Q175 155 195 150" fill="none" stroke="${shadow}" stroke-width="1.5" opacity=".12"/>
+ </g>`;
+}
 function modelSVG({mini=false,photo=false}={}){
  const m=models[state.model],col=shadeFor('dress'),bg=backgrounds[state.scene];
  const dress=state.mode==='dress',ethnic=state.mode==='punjabi',garments=ethnic?punjabiSuitSVG(state.punjabi,shadeFor('punjabi')):(dress?garmentSVG('dress',state.dress,col):garmentSVG('bottom',state.bottom,shadeFor('bottom'))+garmentSVG('top',state.top,shadeFor('top')));
- const head=`<ellipse cx="175" cy="102" rx="40" ry="55" fill="${m.skin}"/><path d="M144 109Q174 128 205 109" fill="none" stroke="${m.shade}" stroke-width="1.5" opacity=".4"/><path d="M154 107Q161 100 169 107M182 107Q191 100 198 107" fill="none" stroke="${m.eyes}" stroke-width="3.4" stroke-linecap="round"/><circle cx="163" cy="107" r="2" fill="#292333"/><circle cx="191" cy="107" r="2" fill="#292333"/><path d="M171 127Q177 133 184 127" fill="none" stroke="#bd626e" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="149" cy="120" rx="9" ry="5" fill="#e88891" opacity=".35"/><ellipse cx="203" cy="120" rx="9" ry="5" fill="#e88891" opacity=".35"/>`;
+ const head=faceSVG(m,state.model);
  const figure=`<path d="M154 140L154 160L196 160L196 140Z" fill="${m.skin}"/><path d="M151 152Q131 160 125 186L118 251Q114 267 119 273Q128 280 133 262L150 199L145 235Q175 246 205 235L201 198L219 265Q225 279 233 267L227 245L225 187Q218 160 198 152L190 147Q176 163 161 147Z" fill="${m.skin}" stroke="${m.shade}" stroke-width="1.2"/><path d="M147 228Q175 240 203 228L205 270L204 329L205 402Q203 418 191 418Q181 415 179 402L175 294L170 402Q168 418 155 418Q144 414 146 399L147 328Z" fill="${m.skin}" stroke="${m.shade}" stroke-width="1.2"/>`;
  const hair=state.hairTint||m.hair;
  const decor=mini?'':`<circle cx="48" cy="91" r="4" fill="${bg.stars}"/><path d="M291 91l6 13 13 5-13 5-6 13-5-13-13-5 13-5Z" fill="${bg.stars}"/><path d="M63 310l4 9 9 3-9 4-4 9-4-9-9-4 9-3Z" fill="${bg.stars}" opacity=".8"/><circle cx="275" cy="334" r="5" fill="${bg.stars}"/>`;
@@ -205,7 +271,12 @@ function itemSVG(kind,type){const c=shadeFor(kind);let body='';if(kind==='punjab
  return `<svg viewBox="${view}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${body||`<circle cx="177" cy="96" r="29" fill="#ead3ed"/><path d="M164 95h26" stroke="#9c7b9a" stroke-width="5"/>`}</svg>`;
 }
 function paint(){ $('stage').innerHTML=modelSVG();$('modelName').textContent=models[state.model].name;$('modelAvatar').textContent=models[state.model].avatar;renderModels();renderItems();renderColors();historyUI();}
-function renderModels(){ $('models').innerHTML=models.map((m,i)=>`<button class="model-btn ${i===state.model?'active':''}" data-index="${i}" aria-pressed="${i===state.model}"><svg class="model-thumb" viewBox="115 34 120 150" aria-hidden="true"><path d="M136 93Q123 34 175 30Q228 33 214 97L221 178L133 178Z" fill="${m.hair}"/><ellipse cx="176" cy="87" rx="37" ry="47" fill="${m.skin}"/><path d="M137 81Q133 33 175 32Q218 34 215 84L202 65Q173 84 137 81Z" fill="${m.hair}"/><path d="M144 163L207 163L224 212H127Z" fill="${colors[i*3]}"/><circle cx="160" cy="92" r="3" fill="${m.eyes}"/><circle cx="190" cy="92" r="3" fill="${m.eyes}"/><path d="M168 112Q175 118 182 112" stroke="#ab5872" fill="none" stroke-width="2"/></svg><strong>${esc(m.name)}</strong></button>`).join('');document.querySelectorAll('.model-btn').forEach(b=>b.addEventListener('click',()=>{checkpoint();state.model=+b.dataset.index;paint();}));}
+function renderModels(){ $('models').innerHTML=models.map((m,i)=>`<button class="model-btn ${i===state.model?'active':''}" data-index="${i}" aria-pressed="${i===state.model}" aria-label="Dress ${esc(m.name)}"><svg class="model-thumb" viewBox="115 34 120 142" aria-hidden="true">
+<path d="M136 102Q119 39 175 28Q228 39 214 103L222 176H132Z" fill="${m.hair}"/>
+<path d="M143 155L206 155Q221 165 226 196H123Q128 166 143 155Z" fill="${colors[i*2%colors.length]}"/>
+${faceSVG(m,i)}
+<path d="M138 98Q129 46 154 39Q177 21 197 40Q222 46 213 97Q202 74 189 72Q158 91 138 98Z" fill="${m.hair}"/>
+</svg><strong>${esc(m.name)}</strong></button>`).join('');document.querySelectorAll('.model-btn').forEach(b=>b.addEventListener('click',()=>{checkpoint();state.model=+b.dataset.index;paint();}));}
 function renderTabs(){ $('tabs').innerHTML=Object.keys(catalog).map(k=>`<button class="tab ${k===state.category?'active':''}" data-cat="${k}" aria-pressed="${k===state.category}">${icons[k]} ${labels[k]}</button>`).join('');document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{state.category=b.dataset.cat;if(state.category==='punjabi')state.mode='punjabi';renderTabs();paint();}));}
 function renderItems(){const cat=state.category;$('categoryHeading').textContent=labels[cat];$('categoryCount').textContent=`${cat==='punjabi'?6:catalog[cat].length} styles`;if($('punjabiOptions'))$('punjabiOptions').hidden=cat!=='punjabi';if($('punjabiOccasion'))$('punjabiOccasion').value=state.punjabiOccasion;const active=state[cat];const choices=cat==='punjabi'?catalog.punjabi.filter(([id])=>(state.punjabiOccasion==='wedding'?PUNJABI_WEDDING:PUNJABI_CASUAL).includes(id)):catalog[cat];$('items').innerHTML=choices.map(([id,name])=>`<button class="item ${id===active?'active':''}" data-item="${esc(id)}" aria-pressed="${id===active}">${itemSVG(cat,id)}<span>${esc(name)}</span></button>`).join('');document.querySelectorAll('.item').forEach(b=>b.addEventListener('click',()=>{checkpoint();state[cat]=b.dataset.item;if(cat==='dress')state.mode='dress';if(cat==='top'||cat==='bottom')state.mode='separates';if(['punjabi','dupatta','jewelry'].includes(cat))state.mode='punjabi';paint();}));}
 function renderColors(){const kind=state.category==='hair'?'hair':state.category;const active=kind==='hair'?(state.hairTint||models[state.model].hair):shadeFor(kind);$('colorTarget').textContent=labels[state.category];$('colors').innerHTML=colors.map(c=>`<button class="swatch ${c===active?'active':''}" style="--swatch:${c}" data-color="${c}" title="Color ${c}" aria-label="Select ${labels[state.category]} color ${c}" aria-pressed="${c===active}"></button>`).join('');document.querySelectorAll('.swatch').forEach(b=>b.addEventListener('click',()=>{checkpoint();if(kind==='hair')state.hairTint=b.dataset.color;else{state.palette[kind]=b.dataset.color;state.color=b.dataset.color;}paint();}));}
