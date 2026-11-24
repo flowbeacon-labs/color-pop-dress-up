@@ -183,7 +183,14 @@ function persistRunway(){
  try{localStorage.setItem(RUNWAY_KEY,JSON.stringify({version:1,theme:runwayTheme,lineup:runwayLineup}));}catch{toast('Runway not saved: browser storage is unavailable.');}
 }
 function runwayCount(){return runwayLineup.filter(Boolean).length;}
-function runwayArtwork(look){return savedThumbnail(look);}
+function runwayArtwork(look){
+ const previous=snapshot();
+ try{
+  Object.assign(state,look);
+  if(!state.palette)state.palette={dress:state.color||colors[0],top:state.color||colors[0],bottom:state.color||colors[0],shoes:state.color||colors[0],accessory:state.color||colors[0]};
+  return modelSVG({mini:true});
+ }finally{Object.assign(state,previous);}
+}
 function renderRunway(){
  const theme=runwayThemes.find(t=>t.id===runwayTheme)||runwayThemes[0];
  $('runwaySet').style.setProperty('--runway-start',theme.start);
@@ -272,6 +279,9 @@ $('runwayAdd').addEventListener('click',()=>{if(runwayPlaying)return;const index
 $('runwayStart').addEventListener('click',()=>{if(runwayPlaying){stopRunway();renderRunwayStage();}else startRunway();});
 $('runwaySavePhoto').addEventListener('click',downloadRunway);
 loadRunway();
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&!$('runwayDialog').hidden){stopRunway(false);$('runwayDialog').hidden=true;}
+});
 
 showChallenge();
 renderTabs();paint();historyUI();
