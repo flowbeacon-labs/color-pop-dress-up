@@ -80,6 +80,8 @@ function garmentSVG(kind,type,color,preview=false){const dark=blend(color,-.18),
   const tall=type==='boots',ankle=type==='ankleBoot',height=tall?337:ankle?372:397;
   for(const center of [155,194]){
    const y=height;x+=`<path d="M${center-11} ${y}L${center+10} ${y}L${center+11} 419Q${center+28} 425 ${center+22} 434 L${center-22} 434Q${center-28} 425 ${center-12} 416Z" fill="${color}" stroke="${dark}" stroke-width="2"/>`;
+   if(['jutti','bridalJutti'].includes(type))x+=path(`M${center-18} 429Q${center} 416 ${center+19} 429`,'none',`stroke="${type==='bridalJutti'?'#ffe3a2':light}" stroke-width="4"`);
+   if(type==='festiveSandals')x+=path(`M${center-8} 424L${center+12} 424`,'none','stroke="#ffe4a4" stroke-width="5"');
    if(['sneakers','highTops'].includes(type))x+=path(`M${center-8} 418L${center+11} 418`,'none',`stroke="#fff" stroke-width="4" stroke-dasharray="4 3"`);
    if(type==='heels')x+=path(`M${center+14} 431L${center+17} 443`,'none',`stroke="${dark}" stroke-width="4"`);
    if(type==='sandals')x+=path(`M${center-9} 423L${center+12} 423`,'none',`stroke="${light}" stroke-width="6"`);
@@ -88,17 +90,21 @@ function garmentSVG(kind,type,color,preview=false){const dark=blend(color,-.18),
  }
  return x;
 }
-function hairBack(type,color){const shade=blend(color,-.22);let p='';if(['long','straight','curly','braid','ponytail'].includes(type)){
+function hairBack(type,color){const shade=blend(color,-.22);let p='';if(['long','straight','curly','braid','ponytail','punjabiBraid','parandaBraid'].includes(type)){
  p+=path('M140 62 Q122 93 126 172L152 204 L151 111L205 111L211 204L234 169Q230 99 214 60Z',color);
+ if(type==='punjabiBraid'||type==='parandaBraid')p+=path('M211 116Q243 179 227 313','none',`stroke="${color}" stroke-width="16"`);
+ if(type==='parandaBraid')p+=path('M227 232Q238 279 217 322','none','stroke="#ec2983" stroke-width="8"');
  if(type==='ponytail')p+=path('M208 82Q260 107 239 211Q217 209 221 157Q231 115 204 101Z',shade);
  if(type==='braid')for(let y=111;y<225;y+=17)p+=`<ellipse cx="226" cy="${y}" rx="10" ry="13" fill="${y%2?shade:color}"/>`;
  if(type==='curly')for(const [x,y] of [[129,117],[127,142],[135,165],[215,150],[224,180],[224,124],[138,189]])p+=`<circle cx="${x}" cy="${y}" r="18" fill="${color}"/>`;
  }
+ if(type==='bridalBun')p+=`<circle cx="215" cy="122" r="31" fill="${color}"/><circle cx="215" cy="122" r="25" fill="none" stroke="#ffe8bd" stroke-width="7" stroke-dasharray="6 5"/>`;
  if(type==='buns')p+=`<circle cx="133" cy="72" r="28" fill="${color}"/><circle cx="216" cy="72" r="28" fill="${color}"/>`;
  return p;
 }
 function hairFront(type,color){const shade=blend(color,-.20);let p=path('M136 100 Q132 37 176 35 Q223 37 217 105 Q202 77 190 70 Q159 94 136 100Z',color);
  if(type==='pixie')p=path('M139 89Q129 48 168 42L180 29L193 44Q226 44 213 98L204 78Q174 83 162 69Z',color);
+ if(type==='bridalBun')p+=path('M139 93Q143 44 178 39Q214 45 213 91',color);
  if(type==='bob')p+=path('M138 74 Q114 109 132 160L150 158Q139 112 145 99 M210 74Q235 110 220 159L204 159Q215 110 204 100',color);
  if(type==='curly')for(const [x,y] of [[144,55],[168,45],[192,48],[213,66],[137,85],[204,91]])p+=`<circle cx="${x}" cy="${y}" r="17" fill="${x%2?shade:color}"/>`;
  if(type==='long')p+=path('M143 83Q158 110 150 154','none',`stroke="${shade}" stroke-width="5"`);
@@ -114,20 +120,88 @@ function accessorySVG(type,color){const dark=blend(color,-.20);switch(type){
  case 'headphones':return path('M139 118Q127 40 176 39Q225 40 214 118','none',`stroke="${color}" stroke-width="12"`)+`<rect x="126" y="99" width="17" height="35" rx="8" fill="${dark}"/><rect x="209" y="99" width="17" height="35" rx="8" fill="${dark}"/>`;
  default:return '';
  }}
+
+const PUNJABI_CASUAL=['patialaSuit','straightSuit','phulkariSuit','printedSuit','cottonSuit','casualAnarkali'];
+const PUNJABI_WEDDING=['bridalLehenga','shararaSuit','ghararaSuit','heavyAnarkali','bridalPatiala','velvetSuit'];
+function punjabiSuitSVG(type,color){
+ const dark=blend(color,-.22),light=blend(color,.29),gold='#ffe2a1',wedding=PUNJABI_WEDDING.includes(type);
+ let lower='';
+ if(type==='bridalLehenga'){
+  lower=path('M147 226Q175 231 202 226Q227 286 250 388Q175 405 100 388Q123 290 147 226Z',color,`stroke="${gold}" stroke-width="5"`);
+  for(const y of [290,324,356,379])lower+=path(`M${125-(y-290)*.19} ${y}Q175 ${y+16} ${225+(y-290)*.19} ${y}`,'none',`stroke="${gold}" stroke-width="3"`);
+ }else if(['shararaSuit','ghararaSuit'].includes(type)){
+  lower=path('M147 228L173 228L169 289Q166 340 151 390L116 391Q141 325 144 280Z',light,`stroke="${dark}" stroke-width="2"`)+path('M177 228L203 228L207 278Q214 334 235 391L198 391Q181 343 180 287Z',light,`stroke="${dark}" stroke-width="2"`);
+  if(type==='ghararaSuit')lower+=path('M129 335Q145 347 161 335M187 335Q203 348 221 335','none',`stroke="${gold}" stroke-width="5"`);
+ }else if(['patialaSuit','bridalPatiala'].includes(type)){
+  lower=path('M149 226L173 228L168 304Q173 350 162 392L135 392Q151 351 136 312Z',light,`stroke="${dark}" stroke-width="2"`)+path('M177 228L202 226L213 312Q196 349 214 392L186 392Q178 349 183 304Z',light,`stroke="${dark}" stroke-width="2"`);
+  lower+=path('M152 272L162 342M197 271L189 344','none',`stroke="${dark}" stroke-width="3" opacity=".35"`);
+ }else lower=path('M149 229L172 229L169 392L146 392ZM178 229L201 229L205 392L183 392Z',light,`stroke="${dark}" stroke-width="2"`);
+ let upper='M141 163Q156 152 165 151L185 151Q200 153 212 164L227 203L211 215L203 183L216 343Q175 353 133 343L146 183L139 215L122 204Z';
+ if(['casualAnarkali','heavyAnarkali'].includes(type))upper='M142 163Q156 151 166 151L184 151Q199 153 211 163L226 206L210 217L202 184Q216 275 241 351Q175 374 108 351Q133 277 146 184L139 217L122 207Z';
+ if(type==='bridalLehenga')upper='M143 163Q157 152 166 152L185 152Q200 152 212 163L226 205L210 216L201 184L201 232Q176 242 148 232L148 184L139 216L121 205Z';
+ let x=path(upper,color,`stroke="${dark}" stroke-width="2.5"`)+path('M159 154Q175 178 191 154','none',`stroke="${gold}" stroke-width="4"`);
+ if(type==='phulkariSuit'||wedding){
+  for(const [a,b] of [[156,250],[182,263],[195,296],[165,327],[190,343]]){
+   x+=`<path d="M${a} ${b-6}l6 6-6 6-6-6Z" fill="none" stroke="${gold}" stroke-width="2"/>`;
+  }
+ }
+ if(type==='printedSuit'||type==='cottonSuit'||type==='straightSuit')for(const [a,b] of [[151,233],[184,249],[164,288],[193,318]])x+=`<circle cx="${a}" cy="${b}" r="5" fill="${light}"/>`;
+ if(wedding)x+=path('M135 338Q175 351 214 338','none',`stroke="${gold}" stroke-width="5"`);
+ return `<g data-ethnic-outfit="${esc(type)}">${lower}${x}</g>`;
+}
+function dupattaSVG(type,color){
+ if(type==='none')return '';
+ const border=['bridal','double','net'].includes(type)?'#ffe3a1':blend(color,.3),dark=blend(color,-.2);
+ let x=path('M210 163Q239 176 236 222L252 379Q237 394 219 373L203 224Q194 192 196 174Z',color,`opacity="${type==='chiffon'?.60:.85}" stroke="${border}" stroke-width="4"`);
+ x+=path('M216 179Q230 261 243 374','none',`stroke="${border}" stroke-width="5"`);
+ if(['phulkari','embroidered','bridal','double','bandhani'].includes(type)){
+  for(let y=224;y<372;y+=22){const a=224+(y-224)*.13;
+   x+=type==='bandhani'?`<circle cx="${a}" cy="${y}" r="4" fill="#fff0bc"/>`:`<path d="M${a} ${y-7}l7 7-7 7-7-7Z" stroke="${dark}" stroke-width="1" fill="#ffed96"/>`;
+  }
+ }
+ if(type==='double')x+=path('M139 163Q113 202 123 242L102 370Q119 390 136 373L151 232L158 170Z',color,`stroke="${border}" stroke-width="5" opacity=".66"`);
+ if(type==='net')x+=path('M215 189L246 373','none','stroke="#fff8e0" stroke-width="2" stroke-dasharray="3 7"');
+ return `<g data-dupatta="${esc(type)}">${x}</g>`;
+}
+function jewelrySVG(type,color){
+ if(type==='none')return '';
+ const metal=type==='chooda'?'#e9295e':color,dark=blend(color,-.22);
+ const earrings=()=>`<circle cx="140" cy="120" r="5" fill="${metal}"/><circle cx="211" cy="120" r="5" fill="${metal}"/>`+path('M140 126Q126 141 140 154Q154 141 140 126ZM211 126Q198 141 211 154Q224 141 211 126Z',metal,`stroke="${dark}" stroke-width="2"`);
+ const bangles=()=>[0,1,2].map(i=>path(`M118 ${251+i*6}H133M219 ${251+i*6}H233`,'none',`stroke="${metal}" stroke-width="4"`)).join('');
+ const tikka=()=>path('M175 35V80','none',`stroke="${metal}" stroke-width="4"`)+`<circle cx="175" cy="88" r="10" fill="${metal}"/><circle cx="175" cy="88" r="4" fill="#e65a83"/>`;
+ let x='';
+ if(['jhumka','chandbali','bridalSet'].includes(type))x+=earrings();
+ if(['bangles','chooda','kaleere','bridalSet'].includes(type))x+=bangles();
+ if(['tikka','nath','bridalSet'].includes(type))x+=tikka();
+ if(['nath','bridalSet'].includes(type))x+=`<circle cx="157" cy="124" r="11" fill="none" stroke="${metal}" stroke-width="3"/>`;
+ if(['chandbali','bridalSet'].includes(type))x+=path('M151 153Q176 205 200 153','none',`stroke="${metal}" stroke-width="7"`)+`<circle cx="176" cy="191" r="8" fill="#ffe6a4"/>`;
+ if(['kaleere','bridalSet'].includes(type))for(const a of [123,227])x+=path(`M${a} 266L${a-4} 307`,'none',`stroke="${metal}" stroke-width="3"`)+`<circle cx="${a-4}" cy="309" r="5" fill="${metal}"/>`;
+ if(type==='paranda')x+=path('M225 129Q241 187 227 267','none','stroke="#ee3688" stroke-width="11"')+path('M227 247L217 293L236 293Z','#ffdc73');
+ return `<g data-jewelry="${esc(type)}">${x}</g>`;
+}
+function punjabiSceneSVG(scene){
+ if(!scene.ethnic)return '';
+ if(scene.ethnic==='fields')return Array.from({length:16},(_,i)=>`<path d="M${i*23-8} 427v-31" stroke="#779c46" stroke-width="3"/><circle cx="${i*23-8}" cy="392" r="7" fill="#f5d43e"/>`).join('');
+ if(scene.ethnic==='courtyard')return '<path d="M17 419V167Q20 78 82 78Q140 78 140 167M211 419V167Q211 78 273 78Q335 78 335 167" fill="none" stroke="#e8b77f" stroke-width="15" opacity=".55"/>';
+ if(scene.ethnic==='mehndi')return '<path d="M0 76Q88 151 175 76Q262 151 350 76" fill="none" stroke="#e46a86" stroke-width="10"/>'+Array.from({length:11},(_,i)=>`<circle cx="${i*35}" cy="${76+i%2*20}" r="9" fill="#ffe5a0"/>`).join('');
+ if(scene.ethnic==='wedding')return '<path d="M33 427V99Q175-19 317 99V427" fill="none" stroke="#ffe2a3" stroke-width="12"/>'+Array.from({length:12},(_,i)=>`<circle cx="${40+i*24}" cy="${95-48*Math.sin(i/11*Math.PI)}" r="8" fill="${i%2?'#f3b44a':'#f06aa7'}"/>`).join('');
+ return '';
+}
+
 function modelSVG({mini=false,photo=false}={}){
  const m=models[state.model],col=shadeFor('dress'),bg=backgrounds[state.scene];
- const dress=state.mode==='dress',garments=dress?garmentSVG('dress',state.dress,col):garmentSVG('bottom',state.bottom,shadeFor('bottom'))+garmentSVG('top',state.top,shadeFor('top'));
+ const dress=state.mode==='dress',ethnic=state.mode==='punjabi',garments=ethnic?punjabiSuitSVG(state.punjabi,shadeFor('punjabi')):(dress?garmentSVG('dress',state.dress,col):garmentSVG('bottom',state.bottom,shadeFor('bottom'))+garmentSVG('top',state.top,shadeFor('top')));
  const head=`<ellipse cx="175" cy="102" rx="40" ry="55" fill="${m.skin}"/><path d="M144 109Q174 128 205 109" fill="none" stroke="${m.shade}" stroke-width="1.5" opacity=".4"/><path d="M154 107Q161 100 169 107M182 107Q191 100 198 107" fill="none" stroke="${m.eyes}" stroke-width="3.4" stroke-linecap="round"/><circle cx="163" cy="107" r="2" fill="#292333"/><circle cx="191" cy="107" r="2" fill="#292333"/><path d="M171 127Q177 133 184 127" fill="none" stroke="#bd626e" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="149" cy="120" rx="9" ry="5" fill="#e88891" opacity=".35"/><ellipse cx="203" cy="120" rx="9" ry="5" fill="#e88891" opacity=".35"/>`;
  const figure=`<path d="M154 140L154 160L196 160L196 140Z" fill="${m.skin}"/><path d="M151 152Q131 160 125 186L118 251Q114 267 119 273Q128 280 133 262L150 199L145 235Q175 246 205 235L201 198L219 265Q225 279 233 267L227 245L225 187Q218 160 198 152L190 147Q176 163 161 147Z" fill="${m.skin}" stroke="${m.shade}" stroke-width="1.2"/><path d="M147 228Q175 240 203 228L205 270L204 329L205 402Q203 418 191 418Q181 415 179 402L175 294L170 402Q168 418 155 418Q144 414 146 399L147 328Z" fill="${m.skin}" stroke="${m.shade}" stroke-width="1.2"/>`;
  const hair=state.hairTint||m.hair;
  const decor=mini?'':`<circle cx="48" cy="91" r="4" fill="${bg.stars}"/><path d="M291 91l6 13 13 5-13 5-6 13-5-13-13-5 13-5Z" fill="${bg.stars}"/><path d="M63 310l4 9 9 3-9 4-4 9-4-9-9-4 9-3Z" fill="${bg.stars}" opacity=".8"/><circle cx="275" cy="334" r="5" fill="${bg.stars}"/>`;
- const scene=mini?'':`<defs><linearGradient id="sceneGradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${bg.top}"/><stop offset="1" stop-color="${bg.bottom}"/></linearGradient></defs><rect width="350" height="480" fill="url(#sceneGradient)"/><ellipse cx="175" cy="457" rx="165" ry="37" fill="${bg.floor}"/><ellipse cx="175" cy="440" rx="73" ry="12" fill="#5e355a" opacity=".13"/>${decor}`;
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 480" preserveAspectRatio="xMidYMid meet" aria-label="${esc(m.name)} wearing selected outfit">${scene}<g>${hairBack(state.hair,hair)}${figure}${garments}${garmentSVG('shoes',state.shoes,shadeFor('shoes'))}${head}${hairFront(state.hair,hair)}${accessorySVG(state.accessory,shadeFor('accessory'))}</g></svg>`;
+ const scene=mini?'':`<defs><linearGradient id="sceneGradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${bg.top}"/><stop offset="1" stop-color="${bg.bottom}"/></linearGradient></defs><rect width="350" height="480" fill="url(#sceneGradient)"/><ellipse cx="175" cy="457" rx="165" ry="37" fill="${bg.floor}"/><ellipse cx="175" cy="440" rx="73" ry="12" fill="#5e355a" opacity=".13"/>${decor}${punjabiSceneSVG(bg)}`;
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 480" preserveAspectRatio="xMidYMid meet" aria-label="${esc(m.name)} wearing selected outfit">${scene}<g>${hairBack(state.hair,hair)}${figure}${garments}${garmentSVG('shoes',state.shoes,shadeFor('shoes'))}${ethnic?dupattaSVG(state.dupatta,shadeFor('dupatta')):''}${head}${hairFront(state.hair,hair)}${accessorySVG(state.accessory,shadeFor('accessory'))}${ethnic?jewelrySVG(state.jewelry,shadeFor('jewelry')):''}</g></svg>`;
  return svg;
 }
-function itemSVG(kind,type){const c=shadeFor(kind);let body='';if(kind==='dress')body=garmentSVG(kind,type,c);else if(kind==='top')body=garmentSVG(kind,type,c);else if(kind==='bottom')body=garmentSVG(kind,type,c);else if(kind==='shoes')body=garmentSVG(kind,type,c);else if(kind==='hair')body=hairBack(type,state.hairTint||models[state.model].hair)+hairFront(type,state.hairTint||models[state.model].hair);else body=accessorySVG(type,c);
+function itemSVG(kind,type){const c=shadeFor(kind);let body='';if(kind==='punjabi')body=punjabiSuitSVG(type,c);else if(kind==='dupatta')body=dupattaSVG(type,c);else if(kind==='jewelry')body=jewelrySVG(type,c);else if(kind==='dress')body=garmentSVG(kind,type,c);else if(kind==='top')body=garmentSVG(kind,type,c);else if(kind==='bottom')body=garmentSVG(kind,type,c);else if(kind==='shoes')body=garmentSVG(kind,type,c);else if(kind==='hair')body=hairBack(type,state.hairTint||models[state.model].hair)+hairFront(type,state.hairTint||models[state.model].hair);else body=accessorySVG(type,c);
  // The preview is a crop of the same vector paths, using coordinates appropriate to the item category.
- const view=kind==='hair'?'108 11 134 205':kind==='accessory'?(type==='bag'?'204 184 79 140':'104 8 150 175'):kind==='shoes'?'114 326 122 129':kind==='bottom'?'107 201 139 205':kind==='top'?'107 141 139 125':'91 138 169 244';
+ const view=kind==='punjabi'?'91 140 169 254':kind==='dupatta'?'175 151 106 247':kind==='jewelry'?'105 10 145 321':kind==='hair'?'108 11 134 205':kind==='accessory'?(type==='bag'?'204 184 79 140':'104 8 150 175'):kind==='shoes'?'114 326 122 129':kind==='bottom'?'107 201 139 205':kind==='top'?'107 141 139 125':'91 138 169 244';
  return `<svg viewBox="${view}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${body||`<circle cx="177" cy="96" r="29" fill="#ead3ed"/><path d="M164 95h26" stroke="#9c7b9a" stroke-width="5"/>`}</svg>`;
 }
 function paint(){ $('stage').innerHTML=modelSVG();$('modelName').textContent=models[state.model].name;$('modelAvatar').textContent=models[state.model].avatar;renderModels();renderItems();renderColors();historyUI();}
