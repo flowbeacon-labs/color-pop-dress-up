@@ -96,3 +96,14 @@
 .model-btn{min-height:118px;justify-content:flex-start}
 .model-btn strong{line-height:1.2}
 @media(max-width:520px){.model-thumb{width:62px;height:70px}.model-btn{min-height:100px;padding:7px 2px}.model-btn strong{font-size:10px}}
+
+/* Face details view */
+.face-closeup-overlay{position:fixed;inset:0;z-index:65;background:#22122ad0;display:flex;justify-content:center;align-items:center;padding:12px}
+.face-closeup-panel{width:min(440px,100%);max-height:93dvh;overflow:auto;border-radius:25px;background:#fff8fc;padding:19px;box-shadow:0 18px 65px #180f2460}
+.face-closeup-header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.face-closeup-header h2{margin:4px 0 9px;color:#703776}
+.face-closeup-header button{padding:10px 12px;border:1px solid #e6cde5;border-radius:12px;background:#fff;color:#623c68;font-weight:900}
+.face-closeup-art{height:min(61vh,440px);min-height:240px;display:grid;place-items:center;background:linear-gradient(150deg,#ffecf4,#eae2ff);border:1px solid #eed2ec;border-radius:18px;overflow:hidden}
+.face-closeup-art svg{height:100%;width:100%;display:block}
+.face-closeup-panel p{text-align:center;font-size:12px;color:#8d708c;margin:12px 0 3px}
+@media(max-width:520px){.face-closeup-art{height:min(56vh,390px)}}
