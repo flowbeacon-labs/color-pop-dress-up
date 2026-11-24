@@ -1,5 +1,21 @@
 # Color Pop Fashion Studio
 
+## Refined model portraits
+
+All eight fashion models now use a shared, more natural illustrated SVG face renderer. It adds:
+- Per-model face proportions with slight changes in cheek/chin width, eye and eyebrow placement.
+- Soft radial complexion shading, subtle cheek and jaw contours, ears and highlights.
+- Almond-shaped eyes with irises, pupils and catchlights, separately drawn eyebrows.
+- A shaped nose, more detailed lips, and a subtle smile.
+- Consistent portraits in the dressing room, model picker, My Looks gallery, SVG exports and fashion runway.
+
+The portraits remain stylized vector illustrations—not photographs or photorealistic renders—and require no external image assets.
+
+**Verification:** JavaScript syntax check passed; 15/15 simulated-DOM portrait and regression checks passed, including all eight faces, ethnic clothes, saved looks and runway. Device/browser visual regression testing is still needed.
+
+---
+
+
 ## Punjabi Fashion Collection
 
 **Punjabi Casual and Punjabi Wedding are implemented as playable SVG fashion layers**, not just catalog names. Open the **Punjabi Outfits** wardrobe tab and select **Casual** or **Wedding**. Then choose **Dupattas**, **Jewelry**, **Shoes**, and **Hair** to complete the look. Each layer has independent color selection and is included in saved looks and exported artwork.
