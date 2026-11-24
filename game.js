@@ -1,29 +1,40 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
-const models=[{name:'Ava',skin:'#e9aa83',shade:'#cf856e',hair:'#4a2b35',eyes:'#654654',avatar:'✿'},{name:'Mia',skin:'#f3c9a8',shade:'#d8a281',hair:'#6e4433',eyes:'#577472',avatar:'♡'},{name:'Zara',skin:'#a96e51',shade:'#81513c',hair:'#282734',eyes:'#463f5c',avatar:'★'},{name:'Luna',skin:'#d9a077',shade:'#ac725c',hair:'#a44c68',eyes:'#6c4b62',avatar:'✦'}];
-const colors=['#ff5da7','#9d7bff','#37bcd7','#ffba3c','#68d88b','#ff7772','#4177d9','#f2e8f7','#38384f','#f176d8','#a5da4e','#ed5a4a'];
+const models=[{name:'Ava',skin:'#e9aa83',shade:'#cf856e',hair:'#4a2b35',eyes:'#654654',avatar:'✿'},{name:'Mia',skin:'#f3c9a8',shade:'#d8a281',hair:'#6e4433',eyes:'#577472',avatar:'♡'},{name:'Zara',skin:'#a96e51',shade:'#81513c',hair:'#282734',eyes:'#463f5c',avatar:'★'},{name:'Luna',skin:'#d9a077',shade:'#ac725c',hair:'#a44c68',eyes:'#6c4b62',avatar:'✦'},
+{name:'Simran',skin:'#e3b18f',shade:'#c68e71',hair:'#2f1b16',eyes:'#4c382e',avatar:'🌸'},
+{name:'Gurleen',skin:'#c98a66',shade:'#a36a4b',hair:'#241410',eyes:'#47362c',avatar:'✨'},
+{name:'Meher',skin:'#f0c0a2',shade:'#d69c7b',hair:'#3e251d',eyes:'#564332',avatar:'💖'},
+{name:'Noor',skin:'#b66f56',shade:'#92543f',hair:'#22120d',eyes:'#48312c',avatar:'🪷'}];
+const colors=['#d81b60','#d32f2f','#7b1f32','#2e7d32','#f9a825','#ef6c00','#1565c0','#00838f','#6a1b9a','#f8e7c8','#c9a227','#ff5da7','#9d7bff','#37bcd7','#ffba3c','#68d88b','#ff7772','#4177d9','#f2e8f7','#38384f','#f176d8','#a5da4e','#ed5a4a'];
 const catalog={
  dress:[['daydream','Daydream'],['princess','Princess'],['party','Party Pop'],['summer','Sunshine'],['ballgown','Ball Gown'],['sparkle','Sparkle'],['layered','Ruffles'],['shirt','Shirt Dress']],
  top:[['tee','Cute Tee'],['blouse','Puff Blouse'],['crop','Crop Top'],['hoodie','Hoodie'],['cardigan','Cardigan'],['halter','Halter'],['bow','Bow Top'],['jacket','Jacket']],
  bottom:[['skirt','Skater Skirt'],['jeans','Flared Jeans'],['shorts','Shorts'],['pleated','Pleated'],['maxi','Maxi Skirt'],['pants','Wide Pants'],['tutu','Tutu'],['overall','Overalls']],
- shoes:[['sneakers','Sneakers'],['boots','Tall Boots'],['heels','Party Heels'],['flats','Ballet Flats'],['sandals','Sandals'],['highTops','High Tops'],['ankleBoot','Ankle Boots'],['platform','Platforms']],
- hair:[['long','Long Waves'],['bob','Cute Bob'],['ponytail','Ponytail'],['buns','Space Buns'],['braid','Side Braid'],['curly','Big Curls'],['pixie','Pixie'],['straight','Straight']],
- accessory:[['none','No Extras'],['bag','Handbag'],['crown','Tiara'],['glasses','Sunglasses'],['necklace','Necklace'],['bow','Hair Bow'],['hat','Sun Hat'],['headphones','Headphones']]
+ shoes:[['sneakers','Sneakers'],['boots','Tall Boots'],['heels','Party Heels'],['flats','Ballet Flats'],['sandals','Sandals'],['highTops','High Tops'],['ankleBoot','Ankle Boots'],['platform','Platforms'],['jutti','Punjabi Jutti'],['bridalJutti','Bridal Jutti'],['festiveSandals','Festive Sandals']],
+ hair:[['long','Long Waves'],['bob','Cute Bob'],['ponytail','Ponytail'],['buns','Space Buns'],['braid','Side Braid'],['curly','Big Curls'],['pixie','Pixie'],['straight','Straight'],['punjabiBraid','Punjabi Braid'],['parandaBraid','Paranda Braid'],['bridalBun','Bridal Bun']],
+ accessory:[['none','No Extras'],['bag','Handbag'],['crown','Tiara'],['glasses','Sunglasses'],['necklace','Necklace'],['bow','Hair Bow'],['hat','Sun Hat'],['headphones','Headphones']],
+ punjabi:[['patialaSuit','Patiala Suit'],['straightSuit','Straight Kurta Set'],['phulkariSuit','Phulkari Suit'],['printedSuit','Printed Kurti Set'],['cottonSuit','Cotton Salwar Suit'],['casualAnarkali','Casual Anarkali'],['bridalLehenga','Bridal Lehenga'],['shararaSuit','Sharara Suit'],['ghararaSuit','Gharara Suit'],['heavyAnarkali','Heavy Anarkali'],['bridalPatiala','Bridal Patiala'],['velvetSuit','Velvet Wedding Suit']],
+ dupatta:[['none','No Dupatta'],['plain','Plain Dupatta'],['phulkari','Phulkari Dupatta'],['chiffon','Chiffon Dupatta'],['bandhani','Bandhani Dupatta'],['embroidered','Embroidered Dupatta'],['bridal','Bridal Dupatta'],['double','Double Dupatta'],['net','Net Border Dupatta']],
+ jewelry:[['none','No Jewelry'],['jhumka','Jhumka Earrings'],['bangles','Colorful Bangles'],['paranda','Paranda'],['tikka','Maang Tikka'],['chandbali','Chandbali Earrings'],['chooda','Bridal Chooda'],['kaleere','Kaleere'],['nath','Nath & Tikka'],['bridalSet','Bridal Jewelry Set']]
 };
-const labels={dress:'Dresses',top:'Tops',bottom:'Bottoms',shoes:'Shoes',hair:'Hair',accessory:'Extras'};
-const icons={dress:'👗',top:'👚',bottom:'👖',shoes:'👟',hair:'🎀',accessory:'💍'};
-const state={model:0,category:'dress',dress:'daydream',top:'blouse',bottom:'skirt',shoes:'flats',hair:'long',accessory:'none',color:'#ff5da7',scene:0,mode:'dress'};
+const labels={dress:'Dresses',top:'Tops',bottom:'Bottoms',shoes:'Shoes',hair:'Hair',accessory:'Extras',punjabi:'Punjabi Outfits',dupatta:'Dupattas',jewelry:'Jewelry'};
+const icons={dress:'👗',top:'👚',bottom:'👖',shoes:'👟',hair:'🎀',accessory:'💍',punjabi:'🌺',dupatta:'🧣',jewelry:'✨'};
+const state={model:0,category:'dress',dress:'daydream',top:'blouse',bottom:'skirt',shoes:'flats',hair:'long',accessory:'none',color:'#ff5da7',scene:0,mode:'dress',punjabi:'patialaSuit',punjabiOccasion:'casual',dupatta:'phulkari',jewelry:'jhumka'};
 // Every garment has its own shade: select a category and then choose its color.
-state.palette={dress:state.color,top:'#37bcd7',bottom:'#9d7bff',shoes:'#ffba3c',accessory:'#ff5da7'};
+state.palette={dress:state.color,top:'#37bcd7',bottom:'#9d7bff',shoes:'#ffba3c',accessory:'#ff5da7',punjabi:'#d81b60',dupatta:'#f9a825',jewelry:'#c9a227'};
 const HISTORY_LIMIT=45,undoStack=[],redoStack=[];
 const snapshot=()=>JSON.parse(JSON.stringify(state));
 function checkpoint(){undoStack.push(snapshot());if(undoStack.length>HISTORY_LIMIT)undoStack.shift();redoStack.length=0;historyUI();}
-function restoreState(saved){Object.assign(state,saved);if(!state.palette)state.palette={dress:state.color||colors[0],top:state.color||colors[0],bottom:state.color||colors[0],shoes:state.color||colors[0],accessory:state.color||colors[0]};if(!catalog[state.category])state.category='dress';renderTabs();paint();historyUI();}
+function restoreState(saved){Object.assign(state,saved);if(!state.palette)state.palette={dress:state.color||colors[0],top:state.color||colors[0],bottom:state.color||colors[0],shoes:state.color||colors[0],accessory:state.color||colors[0]};if(!catalog[state.category])state.category='dress';state.punjabiOccasion=state.punjabiOccasion==='wedding'?'wedding':'casual';renderTabs();paint();historyUI();}
 function historyUI(){if($('undo'))$('undo').disabled=!undoStack.length;if($('redo'))$('redo').disabled=!redoStack.length;}
 function undo(){if(!undoStack.length)return;redoStack.push(snapshot());restoreState(undoStack.pop());toast('Previous outfit restored');}
 function redo(){if(!redoStack.length)return;undoStack.push(snapshot());restoreState(redoStack.pop());toast('Change restored');}
 const shadeFor=kind=>state.palette[kind]||state.color;
-const backgrounds=[{name:'Pink Dream',top:'#ffe0f2',bottom:'#ffc4db',floor:'#ffb0cb',stars:'#fff4b6'},{name:'Lavender',top:'#e8d9ff',bottom:'#d7c4ff',floor:'#bba8f3',stars:'#fff'},{name:'Blue Skies',top:'#d5f7ff',bottom:'#c8eaff',floor:'#adddec',stars:'#fff'},{name:'Sunny',top:'#fff1cd',bottom:'#ffe1a6',floor:'#f4c489',stars:'#fff7df'}];
+const backgrounds=[{name:'Pink Dream',top:'#ffe0f2',bottom:'#ffc4db',floor:'#ffb0cb',stars:'#fff4b6'},{name:'Lavender',top:'#e8d9ff',bottom:'#d7c4ff',floor:'#bba8f3',stars:'#fff'},{name:'Blue Skies',top:'#d5f7ff',bottom:'#c8eaff',floor:'#adddec',stars:'#fff'},{name:'Sunny',top:'#fff1cd',bottom:'#ffe1a6',floor:'#f4c489',stars:'#fff7df'},
+{name:'Punjabi Courtyard',top:'#f7dfc4',bottom:'#f3cfa0',floor:'#c8865b',stars:'#fff7d0',ethnic:'courtyard'},
+{name:'Mustard Fields',top:'#d6efff',bottom:'#a8e3ab',floor:'#edcf4e',stars:'#fff7ca',ethnic:'fields'},
+{name:'Mehndi Celebration',top:'#f6d5a8',bottom:'#d68f57',floor:'#a65a59',stars:'#fff0b7',ethnic:'mehndi'},
+{name:'Wedding Stage',top:'#ffd8e6',bottom:'#d36a89',floor:'#be567a',stars:'#ffefaa',ethnic:'wedding'}];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const blend=(hex,amt)=>{const v=parseInt(hex.slice(1),16);const c=[v>>16&255,v>>8&255,v&255].map(n=>Math.max(0,Math.min(255,Math.round(n+(amt>=0?(255-n):n)*amt))));return '#'+c.map(n=>n.toString(16).padStart(2,'0')).join('');};
 const path=(d,fill,more='')=>`<path d="${d}" fill="${fill}" ${more}/>`;
