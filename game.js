@@ -195,63 +195,74 @@ function punjabiSceneSVG(scene){
  * All facial shading is SVG-only, without external files or network requests.
  */
 function faceSVG(m,index){
- const tone=blend(m.skin,.19),shadow=blend(m.skin,-.16),contour=blend(m.skin,-.28);
- const iris=m.eyes;
- const settings=[
-  {width:37.0,chin:1.0,eye:0.0,brow:0.0,mouth:0.0},
-  {width:38.0,chin:0.0,eye:1.4,brow:-1.0,mouth:1.2},
-  {width:36.5,chin:1.5,eye:-.3,brow:1.2,mouth:-1.0},
-  {width:39.0,chin:.5,eye:.6,brow:.7,mouth:.6},
-  {width:37.0,chin:1.0,eye:.4,brow:-.5,mouth:0.0},
-  {width:36.0,chin:2.0,eye:-.8,brow:1.0,mouth:-.8},
-  {width:38.0,chin:.8,eye:.8,brow:-.7,mouth:.5},
-  {width:37.0,chin:1.3,eye:-.2,brow:1.0,mouth:.0}
- ][index]||{width:37,chin:1,eye:0,brow:0,mouth:0};
- const w=settings.width,chin=151+settings.chin,eyeY=106+settings.eye;
- const gradient='faceTone-'+index,eyeShade='eyeShade-'+index;
- const eyes=[158,191].map((x,n)=>{
-  const left=n===0;
-  const edge=x+(left?-10:10);
-  return `<g>
-   <path d="M${x-10} ${eyeY}Q${x} ${eyeY-7.5} ${x+10} ${eyeY}Q${x} ${eyeY+5.3} ${x-10} ${eyeY}Z" fill="#fffbf8" stroke="${contour}" stroke-width="1.0"/>
-   <ellipse cx="${x}" cy="${eyeY-.3}" rx="4.4" ry="5.0" fill="${iris}"/>
-   <ellipse cx="${x}" cy="${eyeY-.3}" rx="2.6" ry="3.6" fill="#201d29"/>
-   <circle cx="${x-1.5}" cy="${eyeY-2.0}" r="1.5" fill="#fff"/>
-   <circle cx="${x+2}" cy="${eyeY+1}" r=".65" fill="#fff9f3"/>
-   <path d="M${x-10} ${eyeY}Q${x} ${eyeY-8} ${x+10} ${eyeY}" fill="none" stroke="${blend(m.hair,-.1)}" stroke-width="2" stroke-linecap="round"/>
-   <path d="M${edge} ${eyeY-1}l${left?-3:3} -3" stroke="${blend(m.hair,-.12)}" stroke-width="1.2" stroke-linecap="round"/>
+ // Detailed hand-drawn portrait in the same 350x480 SVG coordinate system as the clothes.
+ const light=blend(m.skin,.24),mid=blend(m.skin,.09),shadow=blend(m.skin,-.15),deep=blend(m.skin,-.30);
+ const blush=blend(m.skin,-.11),hair=state.hairTint||m.hair,lip=blend('#b76572',index%2?.07:-.04);
+ const cfg=[
+  {width:37,jaw:26,eyes:0,brow:-1,nose:0,lips:0,tilt:-.6},
+  {width:38,jaw:27,eyes:1.0,brow:0,nose:.9,lips:1,tilt:.5},
+  {width:35,jaw:23,eyes:-.4,brow:1.0,nose:-.6,lips:-.5,tilt:0},
+  {width:39,jaw:29,eyes:.5,brow:.5,nose:1.1,lips:.6,tilt:-.4},
+  {width:36,jaw:24,eyes:0,brow:-.5,nose:-.2,lips:0,tilt:0},
+  {width:35,jaw:23,eyes:-.6,brow:1,nose:1,lips:-.5,tilt:.3},
+  {width:39,jaw:28,eyes:1.1,brow:-1,nose:.3,lips:1,tilt:.6},
+  {width:37,jaw:25,eyes:0,brow:.9,nose:1.3,lips:0,tilt:-.5}
+ ][index]||{width:37,jaw:26,eyes:0,brow:0,nose:0,lips:0,tilt:0};
+ const id='portrait-'+index,ey=105+cfg.eyes;
+ const faceShape=`M175 45 C${175-cfg.width-10} 44 ${175-cfg.width-4} 70 ${175-cfg.width} 103 Q${175-cfg.width+1} 128 ${175-cfg.jaw} 144 Q175 160 ${175+cfg.jaw} 144 Q${175+cfg.width-1} 128 ${175+cfg.width} 103 C${175+cfg.width+4} 70 ${175+cfg.width+10} 44 175 45Z`;
+ const eyes=[157,193].map((cx,n)=>{
+  const flip=n===0?-1:1;
+  const iy=ey+(n?cfg.tilt:-cfg.tilt),iris=m.eyes;
+  return `<g data-eye="${n}">
+   <path d="M${cx-12} ${iy+1}Q${cx-1} ${iy-8.2} ${cx+12} ${iy}Q${cx} ${iy+6.9} ${cx-12} ${iy+1}Z" fill="#faf5f1" stroke="${deep}" stroke-width=".72"/>
+   <ellipse cx="${cx+flip*.3}" cy="${iy+.1}" rx="5.3" ry="5.75" fill="${iris}"/>
+   <circle cx="${cx+flip*.3}" cy="${iy+.3}" r="3.0" fill="#24222b"/>
+   <circle cx="${cx-1.55}" cy="${iy-2.0}" r="1.7" fill="#ffffff"/>
+   <circle cx="${cx+2.1}" cy="${iy+2.4}" r=".64" fill="#ffffff"/>
+   <path d="M${cx-12} ${iy}Q${cx} ${iy-8.5} ${cx+12} ${iy}" stroke="${hair}" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+   <path d="M${cx-10} ${iy+5}Q${cx} ${iy+8.7} ${cx+10} ${iy+4}" fill="none" stroke="${shadow}" stroke-width=".9" opacity=".36"/>
+   <path d="M${cx+flip*10} ${iy-1}l${flip*3} -2.8" fill="none" stroke="${hair}" stroke-width="1.45" stroke-linecap="round"/>
   </g>`;
  }).join('');
- const brows=[158,191].map((x,n)=>`<path d="M${x-12} ${93+settings.brow}Q${x-2} ${87+settings.brow+(n?1:0)} ${x+11} ${92+settings.brow}" fill="none" stroke="${blend(m.hair,.09)}" stroke-width="3.1" stroke-linecap="round" opacity=".93"/>`).join('');
- return `<g data-face-detail="realistic" aria-hidden="true">
- <defs>
-  <radialGradient id="${gradient}" cx="39%" cy="33%" r="79%">
-   <stop offset="0%" stop-color="${tone}"/>
-   <stop offset="55%" stop-color="${m.skin}"/>
-   <stop offset="100%" stop-color="${shadow}"/>
-  </radialGradient>
-  <linearGradient id="${eyeShade}" x1="0" y1="0" x2="1" y2="0">
-   <stop stop-color="${shadow}" stop-opacity=".22"/>
-   <stop offset=".5" stop-color="${tone}" stop-opacity="0"/>
-   <stop offset="1" stop-color="${shadow}" stop-opacity=".22"/>
-  </linearGradient>
- </defs>
- <ellipse cx="137" cy="112" rx="7.4" ry="13.3" fill="${m.skin}" stroke="${shadow}" stroke-width=".8"/>
- <ellipse cx="213" cy="112" rx="7.4" ry="13.3" fill="${m.skin}" stroke="${shadow}" stroke-width=".8"/>
- <path d="M175 48C${175-w} 48 ${175-w-6} 79 ${175-w} 113Q${175-w+2} 137 160 146Q175 ${chin+5} 190 146Q${175+w-2} 137 ${175+w} 113C${175+w+6} 79 ${175+w} 48 175 48Z" fill="url(#${gradient})" stroke="${shadow}" stroke-width=".9"/>
- <path d="M148 119Q143 111 149 103M201 103Q207 112 202 119" fill="none" stroke="${contour}" stroke-width="1.2" opacity=".18"/>
- <path d="M157 132Q175 142 193 132" fill="none" stroke="${shadow}" stroke-width="1" opacity=".17"/>
- <ellipse cx="151" cy="120" rx="10" ry="5.8" fill="#d27c87" opacity=".20"/>
- <ellipse cx="199" cy="120" rx="10" ry="5.8" fill="#d27c87" opacity=".20"/>
- <path d="M150 102Q158 98 167 101M183 101Q192 98 200 102" stroke="${shadow}" stroke-width="2.3" opacity=".12" fill="none"/>
- ${brows}
- ${eyes}
- <path d="M175 109Q173 119 171 126Q174 130 179 127" fill="none" stroke="${contour}" stroke-width="1.5" opacity=".42" stroke-linecap="round"/>
- <path d="M178 124Q180 125 181 126" fill="none" stroke="${tone}" stroke-width="1.6" opacity=".7"/>
- <path d="M163 ${136+settings.mouth}Q170 ${132+settings.mouth} 175 ${134+settings.mouth}Q180 ${132+settings.mouth} 187 ${136+settings.mouth}Q177 ${142+settings.mouth} 163 ${136+settings.mouth}Z" fill="#b85e72" opacity=".83"/>
- <path d="M165 ${136+settings.mouth}Q175 ${138+settings.mouth} 185 ${136+settings.mouth}" stroke="#813f53" stroke-width=".85" fill="none" opacity=".55"/>
- <path d="M170 ${142+settings.mouth}Q176 ${143+settings.mouth} 181 ${142+settings.mouth}" stroke="${tone}" stroke-width="1.5" fill="none" opacity=".58"/>
- <path d="M155 150Q175 155 195 150" fill="none" stroke="${shadow}" stroke-width="1.5" opacity=".12"/>
+ const brows=[157,193].map((cx,n)=>`<path d="M${cx-13} ${91+cfg.brow}Q${cx-1} ${84+cfg.brow+n*.9} ${cx+12} ${91+cfg.brow}" stroke="${blend(hair,.13)}" stroke-width="3.5" stroke-linecap="round" fill="none"/>`).join('');
+ return `<g data-face-detail="lifelike" aria-hidden="true">
+  <defs>
+   <radialGradient id="${id}-skin" cx="42%" cy="32%" r="72%">
+    <stop stop-color="${light}"/><stop offset=".30" stop-color="${mid}"/><stop offset=".72" stop-color="${m.skin}"/><stop offset="1" stop-color="${shadow}"/>
+   </radialGradient>
+   <linearGradient id="${id}-nose" x1="0" y1="0" x2="1" y2="0">
+    <stop stop-color="${shadow}" stop-opacity=".32"/><stop offset=".43" stop-color="${light}" stop-opacity=".59"/><stop offset=".7" stop-color="${m.skin}" stop-opacity="0"/><stop offset="1" stop-color="${deep}" stop-opacity=".23"/>
+   </linearGradient>
+   <radialGradient id="${id}-cheek"><stop stop-color="#bb6077" stop-opacity=".24"/><stop offset="1" stop-color="#bb6077" stop-opacity="0"/></radialGradient>
+   <linearGradient id="${id}-lip" x1="0" y1="0" x2=".2" y2="1">
+    <stop stop-color="${blend(lip,.24)}"/><stop offset=".65" stop-color="${lip}"/><stop offset="1" stop-color="${blend(lip,-.23)}"/>
+   </linearGradient>
+   <clipPath id="${id}-clip"><path d="${faceShape}"/></clipPath>
+  </defs>
+  <ellipse cx="137" cy="110" rx="6.5" ry="12.4" fill="${shadow}"/>
+  <ellipse cx="213" cy="110" rx="6.5" ry="12.4" fill="${shadow}"/>
+  <ellipse cx="138" cy="110" rx="4" ry="8.5" fill="${m.skin}"/>
+  <ellipse cx="212" cy="110" rx="4" ry="8.5" fill="${m.skin}"/>
+  <path d="${faceShape}" fill="url(#${id}-skin)" stroke="${shadow}" stroke-width=".68"/>
+  <g clip-path="url(#${id}-clip)">
+   <ellipse cx="147" cy="120" rx="17.5" ry="13" fill="url(#${id}-cheek)"/>
+   <ellipse cx="203" cy="120" rx="17.5" ry="13" fill="url(#${id}-cheek)"/>
+   <ellipse cx="167" cy="72" rx="24" ry="15" fill="${light}" opacity=".15"/>
+   <path d="M139 111Q140 135 158 145M211 111Q209 135 192 145" stroke="${deep}" stroke-width="4.5" fill="none" opacity=".075"/>
+   <path d="M170 148Q175 151 180 148" stroke="${light}" stroke-width="2" opacity=".35" fill="none"/>
+  </g>
+  <path d="M144 103Q155 96 170 101M180 101Q195 96 206 103" stroke="${deep}" stroke-width="3.5" opacity=".08" fill="none"/>
+  ${brows}
+  ${eyes}
+  <path d="M173 105Q172 118 ${170+cfg.nose} 124Q175 128 ${182+cfg.nose} 124L179 110" fill="url(#${id}-nose)" opacity=".74"/>
+  <path d="M172 113Q172 123 169 126Q173 130 178 127" stroke="${shadow}" stroke-width="1.2" opacity=".47" stroke-linecap="round" fill="none"/>
+  <path d="M179 124Q182 126 183 126" stroke="${deep}" stroke-width=".9" opacity=".35" fill="none"/>
+  <path d="M174 124L177 123" stroke="${light}" stroke-width="1.2" opacity=".7"/>
+  <path d="M163 ${136+cfg.lips}Q169 ${132+cfg.lips} 174 ${134+cfg.lips}Q176 ${132+cfg.lips} 179 ${134+cfg.lips}Q184 ${132+cfg.lips} 188 ${136+cfg.lips}Q182 ${144+cfg.lips} 175 ${144+cfg.lips}Q167 ${143+cfg.lips} 163 ${136+cfg.lips}Z" fill="url(#${id}-lip)"/>
+  <path d="M164 ${136+cfg.lips}Q175 ${139+cfg.lips} 187 ${136+cfg.lips}" fill="none" stroke="${blend(lip,-.31)}" stroke-width="1.05" opacity=".8"/>
+  <path d="M170 ${141+cfg.lips}Q175 ${143+cfg.lips} 180 ${141+cfg.lips}" stroke="#fff0e9" stroke-width=".8" opacity=".38" fill="none"/>
+  <path d="M163 135L161 134M189 135L191 134" stroke="${deep}" stroke-width=".75" opacity=".15"/>
+  <path d="M156 146Q175 151 194 146" stroke="${shadow}" stroke-width=".8" fill="none" opacity=".12"/>
  </g>`;
 }
 function modelSVG({mini=false,photo=false}={}){
