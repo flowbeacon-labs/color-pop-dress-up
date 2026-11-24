@@ -1,5 +1,18 @@
 # Color Pop Fashion Studio
 
+## More Lifelike Portraits and Face Zoom
+
+All eight models now have an upgraded SVG face renderer with four-tone complexion shading, stronger cheek/jaw contours, realistically positioned brows, almond-shaped eyes with iris highlights and eyelids, nose bridge and tip shading, and shaped multi-tone lips. Each model has slightly different facial geometry and eye placement, while preserving their own skin tone and hair color.
+
+Tap **Face Zoom** beneath the model to see a close-up portrait without changing her outfit. This works with Western and Punjabi outfits and the current hairstyle. The updated face art is also used for model selection, saved outfits, photo exports and runway poses.
+
+This is **illustrated semi-realism**, not a photographic face-replacement system. SVG was deliberately retained to preserve offline use, fast loading and compatibility with dress-up layers. For true photo-realism, the app would need a separate consistent character-image asset pipeline and matching clothing segmentation.
+
+**Verification:** JavaScript syntax check passed; 15/15 simulated DOM regression checks passed, including all eight models, ethnic clothing, opening/closing Face Zoom, gallery and runway. Real-browser visual QA on an iPhone is still outstanding.
+
+---
+
+
 ## Refined model portraits
 
 All eight fashion models now use a shared, more natural illustrated SVG face renderer. It adds:
