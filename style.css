@@ -90,3 +90,9 @@
 .runway-performer{width:145px;flex:0 0 145px}
 .runway-slots{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:650px){.runway-performer{width:110px;flex-basis:110px}.runway-models{gap:4px}.runway-figure{height:174px}}
+
+/* Refined illustrated portrait thumbnails, keeping facial detail readable. */
+.model-thumb{width:76px;height:84px;max-width:100%;overflow:visible}
+.model-btn{min-height:118px;justify-content:flex-start}
+.model-btn strong{line-height:1.2}
+@media(max-width:520px){.model-thumb{width:62px;height:70px}.model-btn{min-height:100px;padding:7px 2px}.model-btn strong{font-size:10px}}
