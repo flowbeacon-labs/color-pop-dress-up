@@ -1,5 +1,38 @@
 # Color Pop Fashion Studio
 
+## Punjabi Fashion Collection
+
+**Punjabi Casual and Punjabi Wedding are implemented as playable SVG fashion layers**, not just catalog names. Open the **Punjabi Outfits** wardrobe tab and select **Casual** or **Wedding**. Then choose **Dupattas**, **Jewelry**, **Shoes**, and **Hair** to complete the look. Each layer has independent color selection and is included in saved looks and exported artwork.
+
+### Models
+Four additional fashion models—**Simran, Gurleen, Meher, and Noor**—join Ava, Mia, Zara and Luna, for eight models total. All eight can appear in the horizontal-scroll runway lineup, and each has an independent outfit slot.
+
+### Outfit catalog
+- **Casual (6):** Patiala Suit, Straight Kurta Set, Phulkari Suit, Printed Kurti Set, Cotton Salwar Suit, Casual Anarkali
+- **Wedding (6):** Bridal Lehenga, Sharara Suit, Gharara Suit, Heavy Anarkali, Bridal Patiala, Velvet Wedding Suit
+- **Dupattas (9):** None, Plain, Phulkari, Chiffon, Bandhani, Embroidered, Bridal, Double, Net Border
+- **Jewelry (10):** None, Jhumka, Bangles, Paranda, Maang Tikka, Chandbali, Chooda, Kaleere, Nath & Tikka, Bridal Jewelry Set
+- Added Punjabi Jutti, Bridal Jutti and Festive Sandals, plus Punjabi Braid, Paranda Braid and Bridal Bun hairstyles
+- Added 11 festive color swatches in addition to the existing palette
+- Added Courtyard, Mustard Fields, Mehndi Celebration, and Wedding Stage scenes
+- Added five Punjabi styling challenges and three themed runway backgrounds: Phulkari Parade, Mehndi Night and Shaadi Stage
+
+### How to dress a Punjabi model
+1. Pick any of the eight models.
+2. Open **Punjabi Outfits**, select Casual or Wedding, and choose a suit.
+3. Open **Dupattas** and select a drape. Change the swatch to recolor only the dupatta.
+4. Open **Jewelry**, **Shoes**, and **Hair** to complete the outfit.
+5. Try **My Looks** to save or restore it; add the look to the **Fashion Show** lineup.
+6. Use **Photo** for an SVG of the single model, or **Save Show Picture** for the full runway.
+
+### Design and technical notes
+Punjabi garments are stylized vector illustrations fitted to the game's existing body layout. Salwar/patiala, gharara/sharara and lehenga have different lower silhouettes, kameez/anarkali have different upper shapes, and phulkari/bridal items have decorative stitch patterns. Dupattas, jewelry and backgrounds are separate SVG layers. The clothing is **not** derived from photographs, and these are simplified cartoon representations rather than authentic textile reproductions. Saved looks from older versions remain readable.
+
+**Validation:** JavaScript syntax compilation and 17 simulated-DOM checks passed, covering category filtering, SVG garment/jewelry layering, casual/wedding switching, scenes, new model slots, runway persistence and gallery saving. Actual iPhone Safari visual quality and complex outfit combinations still require device testing.
+
+---
+
+
 ## Fashion Runway (new)
 
 The **Fashion Show** button opens a multi-model runway. This is a browser game feature, not a separate service.
