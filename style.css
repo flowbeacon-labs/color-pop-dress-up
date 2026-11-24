@@ -29,3 +29,5 @@
 .saved-actions .delete{color:#bd4d72}
 .empty-state{color:#825e86}
 @media(max-width:520px){.head-actions{width:100%;gap:7px}.head-btn{padding:9px 10px}.challenge-box{padding:12px}.gallery-panel{padding:14px}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.saved-art{height:210px;padding:6px;gap:2px}.saved-thumb{height:165px;width:100%;display:flex;justify-content:center}.saved-thumb svg{height:100%;max-width:100%;display:block}.saved-art strong{font-size:13px}.saved-art span{font-size:10px}
